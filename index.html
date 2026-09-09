@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DJ Mixes Studio</title>
+<meta name="description" content="An in-browser two-deck DJ mixer for playing and blending music at live events. Load local tracks, crossfade between decks — no upload or install required." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <div class="container app-header-row">
+    <div class="brand">
+      <span class="brand-mark">DJ</span>
+      <span class="brand-text">
+        <span class="name">DJ Mixes Studio</span>
+        <span class="sub">Two-Deck Browser Mixer</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="hero-badge">For Live Events</span>
+    <h1>Play and blend music, right in your browser</h1>
+    <p>Load tracks from your laptop, cue them up on two decks, and crossfade between songs — no install, no upload, no account.</p>
+  </div>
+</section>
+
+<main>
+  <div class="container">
+
+    <div class="notice studio-notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+      <p><strong>Everything stays on this device.</strong> Tracks are loaded straight from your computer for this session only — nothing is uploaded or saved anywhere. Only play music you have the rights to play, keep this device plugged in and awake during use, and do a quick sound check before the event starts.</p>
+    </div>
+
+    <div class="studio-grid">
+
+      <!-- Library -->
+      <div class="studio-panel library-panel">
+        <div class="studio-panel-head">
+          <h3>Track Library</h3>
+          <p>Add the music for the event, then load tracks into either deck.</p>
+        </div>
+        <div class="library-drop" id="dropZone" tabindex="0" role="button" aria-label="Add audio files">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          <p>Drag audio files here, or</p>
+          <button type="button" class="btn-card" id="browseBtn">Browse Files</button>
+          <input type="file" id="fileInput" accept="audio/*" multiple hidden />
+        </div>
+        <ul class="library-list" id="libraryList">
+          <li class="library-empty" id="libraryEmpty">No tracks added yet.</li>
+        </ul>
+      </div>
+
+      <!-- Decks -->
+      <div class="deck-pair">
+
+        <div class="deck" data-deck="a">
+          <div class="deck-head">
+            <span class="deck-tag deck-tag-a">Deck A</span>
+            <span class="deck-track" id="trackNameA">No track loaded</span>
+          </div>
+          <canvas class="deck-meter" id="meterA" width="440" height="64" aria-hidden="true"></canvas>
+          <div class="deck-time">
+            <span class="deck-time-cur" id="curTimeA">0:00</span>
+            <input type="range" class="seek" id="seekA" min="0" max="1000" value="0" step="1" disabled aria-label="Seek Deck A" />
+            <span class="deck-time-dur" id="durTimeA">0:00</span>
+          </div>
+          <div class="deck-transport">
+            <button type="button" class="deck-btn-cue" id="cueA" disabled aria-label="Cue Deck A to start">CUE</button>
+            <button type="button" class="deck-btn-play" id="playA" disabled aria-label="Play Deck A">
+              <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+            </button>
+          </div>
+          <div class="deck-row">
+            <label for="volA">Volume</label>
+            <input type="range" id="volA" min="0" max="100" value="100" aria-label="Deck A volume" />
+          </div>
+          <div class="deck-row">
+            <label for="tempoA">Tempo</label>
+            <input type="range" id="tempoA" min="70" max="130" value="100" aria-label="Deck A tempo" />
+            <span class="deck-row-val" id="tempoValA">100%</span>
+          </div>
+          <audio id="audioA" preload="metadata"></audio>
+        </div>
+
+        <div class="deck" data-deck="b">
+          <div class="deck-head">
+            <span class="deck-tag deck-tag-b">Deck B</span>
+            <span class="deck-track" id="trackNameB">No track loaded</span>
+          </div>
+          <canvas class="deck-meter" id="meterB" width="440" height="64" aria-hidden="true"></canvas>
+          <div class="deck-time">
+            <span class="deck-time-cur" id="curTimeB">0:00</span>
+            <input type="range" class="seek" id="seekB" min="0" max="1000" value="0" step="1" disabled aria-label="Seek Deck B" />
+            <span class="deck-time-dur" id="durTimeB">0:00</span>
+          </div>
+          <div class="deck-transport">
+            <button type="button" class="deck-btn-cue" id="cueB" disabled aria-label="Cue Deck B to start">CUE</button>
+            <button type="button" class="deck-btn-play" id="playB" disabled aria-label="Play Deck B">
+              <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+            </button>
+          </div>
+          <div class="deck-row">
+            <label for="volB">Volume</label>
+            <input type="range" id="volB" min="0" max="100" value="100" aria-label="Deck B volume" />
+          </div>
+          <div class="deck-row">
+            <label for="tempoB">Tempo</label>
+            <input type="range" id="tempoB" min="70" max="130" value="100" aria-label="Deck B tempo" />
+            <span class="deck-row-val" id="tempoValB">100%</span>
+          </div>
+          <audio id="audioB" preload="metadata"></audio>
+        </div>
+
+      </div>
+
+      <!-- Crossfader -->
+      <div class="studio-panel crossfader-panel">
+        <div class="cross-labels">
+          <span class="deck-tag deck-tag-a">A</span>
+          <span class="cross-title">Crossfader</span>
+          <span class="deck-tag deck-tag-b">B</span>
+        </div>
+        <input type="range" id="crossfader" min="0" max="100" value="50" aria-label="Crossfader between Deck A and Deck B" />
+        <div class="cross-quick">
+          <button type="button" class="btn-card" data-cross="0">Cut to A</button>
+          <button type="button" class="btn-card" data-cross="50">Center</button>
+          <button type="button" class="btn-card" data-cross="100">Cut to B</button>
+        </div>
+        <div class="master-row">
+          <label for="masterVol">Master Volume</label>
+          <input type="range" id="masterVol" min="0" max="100" value="90" aria-label="Master volume" />
+        </div>
+      </div>
+
+    </div>
+
+    <section class="quick-start">
+      <div class="section-head center">
+        <span class="eyebrow">Quick Start</span>
+        <h2>Running the booth in four steps</h2>
+      </div>
+      <div class="min-list">
+        <div class="min-item">
+          <span class="num">1</span>
+          <div><h3>Add your tracks</h3><p>Drag the event's music files into the Track Library, or browse for them from your laptop. Nothing leaves this browser tab.</p></div>
+        </div>
+        <div class="min-item">
+          <span class="num">2</span>
+          <div><h3>Load a deck</h3><p>Load one track into Deck A and the next one into Deck B, ready to bring in.</p></div>
+        </div>
+        <div class="min-item">
+          <span class="num">3</span>
+          <div><h3>Play and blend</h3><p>Press play on Deck A. When it's time to switch songs, start Deck B and slide the crossfader across to bring it in smoothly.</p></div>
+        </div>
+        <div class="min-item">
+          <span class="num">4</span>
+          <div><h3>Keep queuing</h3><p>While one deck plays, load the next track into the other deck so the music never stops.</p></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="app-footer">
+  <div class="container">
+    <span>DJ Mixes Studio — runs entirely in your browser, nothing is uploaded or stored.</span>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
